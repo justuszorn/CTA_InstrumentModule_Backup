@@ -6,7 +6,6 @@ from astropy import units as u
 import hessio as h
 from ctapipe.io.hessio import hessio_event_source
 from ctapipe.io.files import get_file_type
-import order
 from ctapipe import io
 import list_definition as ld
 
@@ -100,19 +99,22 @@ class Telescope:
     #Getter Functions:
 
     def getTelescopeID(self):
-        return ld.telescope_id
+        print(ld.telescope_id)
 
     def getTelescopePosX(self):
-        return ld.telescope_posX
+        print(ld.telescope_posX)
 
     def getTelescopePosY(self):
-        return ld.telescope_posY
+        print(ld.telescope_posY)
 
     def getTelescopePosZ(self):
-        return ld.telescope_posZ
+        print(ld.telescope_posZ)
 
     def getMirrorArea(self):
-        return ld.mirror_area
+        print(ld.mirror_area)
+
+    def getPixelX(self):
+        print(ld.pixel_posX)
 
     #Plot Functions:
 
