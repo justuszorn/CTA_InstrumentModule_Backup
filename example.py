@@ -9,13 +9,9 @@ ID.initialize(filename,format)
 #get some telescope characteristics stored in the file:
 
 tel = ID.Telescope()
-tel.getTelescopeID()
-tel.getPixelX()
-tel.getMirrorArea()
-
-ld.telescope_id = []
-ld.telescope_posX = []
-ld.mirror_area = []
+print(tel.getTelescopeID())
+print(tel.getPixelX())
+print(tel.getMirrorArea())
 
 #example of fits file:
 format = "fits"
@@ -25,6 +21,6 @@ ID.initialize(filename,format)
 #get some telescope characteristics stored in the file:
 
 tel = ID.Telescope()
-tel.getTelescopeID()
-tel.getTelescopePosX()
-tel.getMirrorArea()
+print(tel.getTelescopeID())
+print(tel.getTelescopePosX())
+print(tel.getMirrorArea())

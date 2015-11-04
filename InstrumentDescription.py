@@ -40,6 +40,7 @@ def close_ascii():
 
 
 def initialize(filename, format = 'hessio'):
+    ld.clear_lists()
     if format == 'hessio':
         load_hessio(filename)
         e=0
@@ -68,8 +69,7 @@ def initialize(filename, format = 'hessio'):
                 break
         
         print("In total %i events have been read." % e)
-        ld.telescope_id = np.array([val for sublist in ld.telescope_id for val in sublist])
-        ld.mirror_area = np.array(ld.mirror_area)
+        ld.telescope_id = [val for sublist in ld.telescope_id for val in sublist]
 
         close_hessio()
 
@@ -99,22 +99,22 @@ class Telescope:
     #Getter Functions:
 
     def getTelescopeID(self):
-        print(ld.telescope_id)
+        return(ld.telescope_id)
 
     def getTelescopePosX(self):
-        print(ld.telescope_posX)
+        return(ld.telescope_posX)
 
     def getTelescopePosY(self):
-        print(ld.telescope_posY)
+        return(ld.telescope_posY)
 
     def getTelescopePosZ(self):
-        print(ld.telescope_posZ)
+        return(ld.telescope_posZ)
 
     def getMirrorArea(self):
-        print(ld.mirror_area)
+        return(ld.mirror_area)
 
     def getPixelX(self):
-        print(ld.pixel_posX)
+        return(ld.pixel_posX)
 
     #Plot Functions:
 

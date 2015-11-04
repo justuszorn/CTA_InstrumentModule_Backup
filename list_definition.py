@@ -1,3 +1,19 @@
+def clear_lists():
+    
+    del telescope_id[:]
+    del telescope_posX[:]
+    del telescope_posY[:]
+    telescope_posZ[:]
+    del pixel_posX[:]
+    del pixel_posY[:]
+    del pixel_posZ[:]
+    del pixel_id[:]
+    del camera_class[:]
+    del camera_fov[:]
+    del mirror_area[:]
+    del mirror_number[:]
+    del focal_length[:]
+ 
 telescope_id = []
 telescope_posX = []
 telescope_posY = []
