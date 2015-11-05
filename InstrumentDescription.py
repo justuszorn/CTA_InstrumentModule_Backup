@@ -12,6 +12,7 @@ import warnings
 
 #TO DO:
 # - rise warnings or put values to -1 or sth. else if desired information is not stored in the file. Currently in such a case returned array is empty. Maybe it's ok like that??
+# - rise warning if one trys to get a camera or optics information of a telescope of ID x which is not given in the file
 
 
 def load_hessio(filename):
