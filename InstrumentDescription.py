@@ -7,7 +7,8 @@ import hessio as h
 from ctapipe.io.hessio import hessio_event_source
 from ctapipe.io.files import get_file_type
 from ctapipe import io
-import list_definition as ld
+import instrument_lists as ld
+import warnings
 
 
 def load_hessio(filename):
@@ -43,6 +44,8 @@ def initialize(filename, format = 'hessio'):
     ld.clear_lists()
     if format == 'hessio':
         load_hessio(filename)
+        
+        
         e=0
         while True:
             try:
@@ -50,6 +53,7 @@ def initialize(filename, format = 'hessio'):
                 print("Event %i is read." % e)
                 nextevent_hessio()
                 ld.telescope_id.append(h.get_teldata_list())
+                ld.telescope_num.append(h.get_num_telescope())
             #ld.telescope_posX.append(?)
             #ld.telescope_posY.append(?)
             #ld.telescope_posZ.append(?)
@@ -70,7 +74,7 @@ def initialize(filename, format = 'hessio'):
         
         print("In total %i events have been read." % e)
         ld.telescope_id = [val for sublist in ld.telescope_id for val in sublist]
-
+        
         close_hessio()
 
     elif format == 'fits':
@@ -96,12 +100,18 @@ class Telescope:
     """`Telescope` is a class that provides and gets all the information about
     a specific telescope such as the camera's characteristics"""
 
+    def __init__(self):
+        self.optics = Optics()
+        self.camera = Camera()
+
     #Getter Functions:
 
     def getTelescopeID(self):
         return(ld.telescope_id)
 
     def getTelescopePosX(self):
+        if len(ld.telescope_posX) == 0:
+            warnings.warn("File contains no info about TelescopePosX.")
         return(ld.telescope_posX)
 
     def getTelescopePosY(self):
@@ -110,13 +120,47 @@ class Telescope:
     def getTelescopePosZ(self):
         return(ld.telescope_posZ)
 
-    def getMirrorArea(self):
-        return(ld.mirror_area)
 
-    def getPixelX(self):
-        return(ld.pixel_posX)
+    #Write Functions:
 
     #Plot Functions:
 
     #def plot(self, list_1, list_2=0):
     #    if list_2==0:
+
+class Optics:
+    """`Optics` is a class that provides and gets all the information about
+    the optics of a specific telescope."""
+
+    def getMirrorArea(self):
+        return(ld.mirror_area)
+
+    def getMirrorNumber(self):
+        return(ld.mirror_number)
+
+    def getOptFocLen(self):
+        return ld.focal_length
+
+class Camera:
+    """`Camera` is a class that provides and gets all the information about
+    the optics of a specific telescope."""
+
+    def getCameraClass(self):
+        return(ld.camera_class)
+
+    def getCameraFOV(self):
+        return(ld.camera_fov)
+
+    def getPixelID(self):
+        return(ld.pixel_id)
+
+    def getPixelX(self):
+        return(ld.pixel_posX)
+
+    def getPixelY(self):
+        return(ld.pixel_posY)
+
+    def getPixelZ(self):
+        return(ld.pixel_posZ)
+
+    

@@ -1,5 +1,4 @@
 import InstrumentDescription as ID
-import list_definition as ld
 
 #example of hessio file:
 format = "hessio"
@@ -8,10 +7,11 @@ ID.initialize(filename,format)
 
 #get some telescope characteristics stored in the file:
 
-tel = ID.Telescope()
-print(tel.getTelescopeID())
-print(tel.getPixelX())
-print(tel.getMirrorArea())
+tel1 = ID.Telescope()
+print(tel1.getTelescopeID())
+print(tel1.camera.getPixelX())
+print(tel1.optics.getMirrorArea())
+print(tel1.getTelescopePosX())
 
 #example of fits file:
 format = "fits"
@@ -20,7 +20,7 @@ ID.initialize(filename,format)
 
 #get some telescope characteristics stored in the file:
 
-tel = ID.Telescope()
-print(tel.getTelescopeID())
-print(tel.getTelescopePosX())
-print(tel.getMirrorArea())
+tel2 = ID.Telescope()
+print(tel2.getTelescopeID())
+print(tel2.getTelescopePosX())
+print(tel2.optics.getMirrorArea())
