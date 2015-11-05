@@ -5,7 +5,7 @@ cam = ID.Camera()
 opt = ID.Optics()
 
 #example of hessio file:
-filename = '/lustre/fs19/group/cta/users/zornju/anaconda3/ctapipe/ctapipe-extra/datasets/gamma_test.simtel.gz'
+filename = 'gamma_test.simtel.gz'
 
 #load only the stored optics info of a specific telescope with ID = 2 out of the file
 ID.initialize_optics(2,filename)
@@ -39,7 +39,7 @@ print('------------------------------------')
 
 
 #example of fits file:
-filename = "/afs/ifh.de/user/z/zornju/luster/PROD2_telconfig.fits"
+filename = "PROD2_telconfig.fits"
 
 #load only the stored optics info of a specific telescope with ID = 2 out of the file
 ID.initialize_optics(2,filename)
