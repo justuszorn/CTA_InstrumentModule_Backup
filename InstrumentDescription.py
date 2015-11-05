@@ -10,6 +10,9 @@ from ctapipe import io
 import instrument_lists as ld
 import warnings
 
+#TO DO:
+# - rise warnings or put values to -1 or sth. else if desired information is not stored in the file. Currently in such a case returned array is empty. Maybe it's ok like that??
+
 
 def load_hessio(filename):
     """Function to open and load hessio files"""
@@ -126,8 +129,8 @@ def initialize_telescope(filename, file_closed = True):
         else:
             pass
 
-        ld.telescope_id = h.get_telescope_ids().tolist()
-        #ld.telescope_id.append(h.get_teldata_list())
+        #ld.telescope_id = h.get_telescope_ids().tolist() #--> this function only can be used if the according python wrapper hase been added to pyhessio.c and hessio.py
+        ld.telescope_id.append(h.get_teldata_list())
         ld.telescope_num = h.get_num_telescope()
 
     elif 'fits' in filename:
