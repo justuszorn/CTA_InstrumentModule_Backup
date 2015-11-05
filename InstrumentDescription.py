@@ -15,6 +15,7 @@ def load_hessio(filename):
     """Function to open and load hessio files"""
     event = h.file_open(filename)
     print("Hessio file %s has been opened" % filename)
+    return event
     
 def nextevent_hessio():
     next(h.move_to_next_event())
@@ -40,60 +41,116 @@ def close_ascii():
     print("ASCII file has been closed")
 
 
-def initialize(filename, format = 'hessio'):
-    ld.clear_lists()
-    if format == 'hessio':
-        load_hessio(filename)
-        
-        
-        e=0
-        while True:
-            try:
-                e+=1
-                print("Event %i is read." % e)
-                nextevent_hessio()
-                ld.telescope_id.append(h.get_teldata_list())
-                ld.telescope_num.append(h.get_num_telescope())
-            #ld.telescope_posX.append(?)
-            #ld.telescope_posY.append(?)
-            #ld.telescope_posZ.append(?)
-            #ld.camera_fov.append(?)
 
-                for i in range(0,len(ld.telescope_id[-1])):
-                #ld.pixel_id.append(?)
-                    px = h.get_pixel_position(ld.telescope_id[-1][i])[0]
-                    ld.pixel_posX.append(px)
-                    py = h.get_pixel_position(ld.telescope_id[-1][i])[1]
-                    ld.pixel_posY.append(py)
-                    ld.camera_class.append(io.guess_camera_geometry(px*u.m,py*u.m).cam_id)
-                    ld.mirror_area.append(h.get_mirror_area(ld.telescope_id[-1][i]))
-                    ld.mirror_number.append(h.get_mirror_number(ld.telescope_id[-1][i]))
+def initialize_camera(tel_id, filename, file_closed = 1):
+    if 'simtel.gz' in filename:
+        if file_closed:
+            ld.clear_lists_camera()
+            load_hessio(filename)
+            nextevent_hessio()
+        else:
+            pass
+    
+        px = h.get_pixel_position(tel_id)[0]
+        py = h.get_pixel_position(tel_id)[1]
+        ld.pixel_posX.append(px)
+        ld.pixel_posY.append(py)
+        ld.camera_class.append(io.guess_camera_geometry(px*u.m,py*u.m).cam_id)
 
-            except:
-                break
+        if file_closed:
+            close_hessio()
         
-        print("In total %i events have been read." % e)
-        ld.telescope_id = [val for sublist in ld.telescope_id for val in sublist]
+    elif 'fits' in filename:
+        hdulist = file_closed
+        if file_closed == 1:
+            ld.clear_lists_camera()
+            ld.clear_lists_telescope()
+            hdulist = load_fits(filename)
+            for i in range(0,len(hdulist[1].data)):
+                ld.telescope_id.append(hdulist[1].data[i]["TelID"])
+        else:
+            pass
         
-        close_hessio()
+        index = ld.telescope_id.index(tel_id)
+        ld.camera_fov.append(hdulist[1].data[index]["FOV"])
+        
+        pixel_id_cam = []
+        index2 = np.where(hdulist[2].data['L0ID'] == index)[0]
+        for i in index2:
+            pixel_id_cam.append(hdulist[2].data[i]['PixelID'])
+        ld.pixel_id.append(pixel_id_cam)
+        
+        if file_closed == 1:
+            close_fits(hdulist)
+    
+        
+def initialize_optics(tel_id, filename, file_closed = 1):
+    if 'simtel.gz' in filename:
+        if file_closed:
+            ld.clear_lists_optics()
+            load_hessio(filename)
+            nextevent_hessio()
+        else:
+            pass
+    
+        ld.mirror_area.append(h.get_mirror_area(tel_id))
+        ld.mirror_number.append(h.get_mirror_number(tel_id))
 
-    elif format == 'fits':
-        hdulist = load_fits(filename)
-        j=0
+        if file_closed:
+            close_hessio()        
+
+    elif 'fits' in filename:
+        hdulist = file_closed
+        if file_closed == 1:
+            ld.clear_lists_optics()
+            ld.clear_lists_telescope()
+            hdulist = load_fits(filename)
+            for i in range(0,len(hdulist[1].data)):
+                ld.telescope_id.append(hdulist[1].data[i]["TelID"])
+        else:
+            pass
+        index = ld.telescope_id.index(tel_id)
+        ld.mirror_area.append(hdulist[1].data[index]["MirrorArea"])
+
+        if file_closed == 1:
+            close_fits(hdulist)
+
+def initialize_telescope(filename, file_closed = True):
+    ld.clear_lists_telescope()
+    ld.clear_lists_camera()
+
+    if 'simtel.gz' in filename:
+        if file_closed:
+            file_closed = load_hessio(filename)
+            nextevent_hessio()
+        else:
+            pass
+
+        ld.telescope_id = h.get_telescope_ids().tolist()
+        #ld.telescope_id.append(h.get_teldata_list())
+        ld.telescope_num = h.get_num_telescope()
+
+    elif 'fits' in filename:
+        if file_closed:
+            hdulist = load_fits(filename)
+            file_closed = hdulist
+        else:
+            pass
+        
         for i in range(0,len(hdulist[1].data)):
             ld.telescope_id.append(hdulist[1].data[i]["TelID"])
             ld.telescope_posX.append(hdulist[1].data[i]["TelX"])
             ld.telescope_posY.append(hdulist[1].data[i]["TelY"])
             ld.telescope_posZ.append(hdulist[1].data[i]["TelZ"])
-            ld.camera_fov.append(hdulist[1].data[i]["FOV"])
-            ld.mirror_area.append(hdulist[1].data[i]["MirrorArea"])
-            
-            pixel_id_cam = []
-            while j<len(hdulist[2].data) and hdulist[2].data[j][1]==i:
-                pixel_id_cam.append(hdulist[2].data[j]['PixelID'])
-                j+=1
-            ld.pixel_id.append(np.array(pixel_id_cam))
+        
 
+    for tel in ld.telescope_id:
+        initialize_camera(tel,filename,file_closed)
+        initialize_optics(tel,filename,file_closed)
+
+    if 'simtel.gz' in filename:   
+        close_hessio()
+    elif 'fits' in filename:
         close_fits(hdulist)
 
 class Telescope:
@@ -105,6 +162,9 @@ class Telescope:
         self.camera = Camera()
 
     #Getter Functions:
+
+    def getTelescopeNumber(self):
+        return ld.telescope_num
 
     def getTelescopeID(self):
         return(ld.telescope_id)
