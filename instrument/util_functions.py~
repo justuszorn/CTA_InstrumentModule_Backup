@@ -1,0 +1,31 @@
+import hessio as h
+from astropy.io import fits
+
+def load_hessio(filename):
+    """Function to open and load hessio files"""
+    event = h.file_open(filename)
+    print("Hessio file %s has been opened" % filename)
+    return event
+    
+def nextevent_hessio():
+    next(h.move_to_next_event())
+
+def load_fits(filename):
+    hdulist = fits.open(filename)
+    print("Fits file %s has been opened" % filename)
+    return hdulist
+
+def load_ascii(filename):
+    """Function to open and load an ASCII file"""
+    print("ASCI file %s has been opened" % filename)
+
+def close_hessio():
+    h.close_file()
+    print("Hessio file has been closed.")
+
+def close_fits(hdulist):
+    print("Fits file has been closed.")
+    hdulist.close()
+
+def close_ascii():
+    print("ASCII file has been closed")

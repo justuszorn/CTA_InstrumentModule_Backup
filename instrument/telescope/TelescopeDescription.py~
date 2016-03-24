@@ -1,0 +1,30 @@
+import hessio as h
+
+def initialize(filename,item):
+    if 'simtel.gz' in filename:
+        return initialize_hessio(filename)
+    elif 'fits' in filename:
+        return initialize_fits(filename,item)
+
+def initialize_hessio(filename):
+    
+    tel_id = h.get_telescope_ids().tolist() #--> this function only can be used if the according python wrapper hase been added to pyhessio.c and hessio.py
+    
+    #tel_id = h.get_teldata_list().tolist()
+    tel_num = h.get_num_telescope()
+    tel_posX = -1
+    tel_posY = -1
+    tel_posZ = -1
+    
+    return tel_id,tel_num,tel_posX,tel_posY,tel_posZ
+
+def initialize_fits(filename,item):
+    hdulist = item
+    teles = hdulist[1].data
+    tel_id = teles["TelID"].tolist()
+    tel_num = len(tel_id)
+    tel_posX = teles["TelX"].tolist()
+    tel_posY = teles["TelY"].tolist()
+    tel_posZ = teles["TelZ"].tolist()
+    
+    return tel_id,tel_num,tel_posX,tel_posY,tel_posZ
